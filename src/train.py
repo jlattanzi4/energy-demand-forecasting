@@ -122,7 +122,7 @@ def train_model(
     model = model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode="min", factor=0.5, patience=3, verbose=True,
+        optimizer, mode="min", factor=0.5, patience=3,
     )
     criterion = nn.MSELoss()
 
