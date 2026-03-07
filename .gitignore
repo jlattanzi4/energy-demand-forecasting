@@ -1,0 +1,32 @@
+# Data
+data/*.csv
+data/*.zip
+
+# Model artifacts
+models/*.pth
+models/*.pkl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow
+mlruns/
+
+# OS
+.DS_Store
+Thumbs.db

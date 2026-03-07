@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Energy Demand Forecasting API — serves 24-hour energy consumption
+  predictions for PJM East via PyTorch LSTM/TCN models.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+
+Resources:
+  EnergyForecastFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+        Predict:
+          Type: Api
+          Properties:
+            Path: /predict
+            Method: post
+    Metadata:
+      DockerTag: latest
+      DockerContext: ../
+      Dockerfile: Dockerfile
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  FunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt EnergyForecastFunction.Arn
