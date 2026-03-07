@@ -24,7 +24,7 @@ from src.models.tcn import EnergyTCN
 def load_model(
     model_path: str,
     model_type: str = "lstm",
-    input_size: int = 17,
+    input_size: int | None = None,
     device: str | None = None,
 ) -> torch.nn.Module:
     """Load a trained model from a checkpoint file.
@@ -32,7 +32,7 @@ def load_model(
     Args:
         model_path: Path to the .pth checkpoint.
         model_type: "lstm" or "tcn".
-        input_size: Number of input features (must match training config).
+        input_size: Number of input features. If None, inferred from checkpoint.
         device: Compute device (auto-detected if None).
 
     Returns:
@@ -47,6 +47,20 @@ def load_model(
             else "cpu"
         )
 
+    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
+
+    # Infer input_size from checkpoint weights if not provided
+    if input_size is None:
+        state = checkpoint["model_state_dict"]
+        if model_type == "lstm":
+            # lstm.weight_ih_l0 shape is (4*hidden_size, input_size)
+            input_size = state["lstm.weight_ih_l0"].shape[1]
+        elif model_type == "tcn":
+            # First conv weight shape is (out_channels, in_channels, kernel_size)
+            input_size = state["tcn.network.0.conv1.conv.weight_g"].shape[0]
+            # Actually use the raw weight to get input channels
+            input_size = state["tcn.network.0.conv1.conv.weight_v"].shape[1]
+
     if model_type == "lstm":
         model = EnergyLSTM(input_size=input_size)
     elif model_type == "tcn":
@@ -54,7 +68,6 @@ def load_model(
     else:
         raise ValueError(f"Unknown model type: {model_type}")
 
-    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint["model_state_dict"])
     model.to(device)
     model.eval()
