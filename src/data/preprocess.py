@@ -22,6 +22,7 @@ def load_data(data_path: str = "data/PJME_hourly.csv") -> pd.DataFrame:
     df["datetime"] = pd.to_datetime(df["datetime"])
     df = df.sort_values("datetime").reset_index(drop=True)
     df = df.set_index("datetime")
+    df = df[~df.index.duplicated(keep="first")]
 
     # Reindex to continuous hourly frequency, interpolate gaps
     full_range = pd.date_range(start=df.index.min(), end=df.index.max(), freq="h")
