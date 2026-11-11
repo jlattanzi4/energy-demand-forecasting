@@ -1,3 +1,6 @@
+> [!WARNING]
+> **Archived, November 2026.** This project is not maintained, and its headline result overstates the models. The "58% lower MAE" below is measured against a same-hour-last-week baseline, which is a weak yardstick for a day-ahead forecast: the same hour yesterday, or a gradient-boosted model on the same features, would be much harder to beat. That comparison was never run ([#1](https://github.com/jlattanzi4/energy-demand-forecasting/issues/1)), so treat the results table as unverified. The code is kept as it was.
+
 # Energy Demand Forecasting with PyTorch
 
 End-to-end time series forecasting system that predicts hourly energy consumption for the PJM East regional transmission network. Built with PyTorch LSTM and Temporal Convolutional Network (TCN) architectures, benchmarked against Prophet and Seasonal Naive baselines, served via FastAPI, containerized with Docker, and deployable on AWS.
